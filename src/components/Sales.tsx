@@ -84,7 +84,7 @@ const Sales = () => {
       return;
     }
     try {
-      const response = await axiosInstance.post("/api/postSale", {
+      await axiosInstance.post("/api/postSale", {
         itemName: selectedItem,
         customerName: selectedCustomer,
         quantity,

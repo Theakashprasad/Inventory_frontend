@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../lib/axios";
-import { Iuser } from "../Types/User";
 
 const Dashboard = () => {
-  const [usersDatas, setUsersDatas] = useState<Iuser | null>();
   const [inventoryCount, setInventoryCount] = useState(0);
   const [customerCount, setCustomerCount] = useState(0);
   const [totalProfit, setTotalProfit] = useState(0);

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import  { useEffect, useRef, useState } from "react";
 import axiosInstance from "../lib/axios";
 import { Icustomer } from "../Types/User";
 import axios from "axios";
@@ -13,7 +13,6 @@ const Customer = () => {
   const [address, setAddress] = useState("");
   const [userData, setUserData] = useState<Icustomer[] | null>();
   const [usersDatas, setUsersDatas] = useState<Icustomer | null>();
-  const [editData, setEditData] = useState<Icustomer | null>();
   const [getId, setId] = useState();
 
   const modalRef = useRef<HTMLDialogElement>(null);
@@ -67,7 +66,6 @@ const Customer = () => {
 
   const openEditModal = (user: Icustomer) => {
     if (editmodalRef.current) {
-      setEditData(user);
       setCustomerName(user.name); // Set the initial value for itemName
       setEmail(user.email); // Set the initial value for description
       setPhone(user.phone); // Set the initial value for quantity

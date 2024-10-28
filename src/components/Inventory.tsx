@@ -17,7 +17,6 @@ const Inventory = () => {
   const [price, setPrice] = useState("");
   const [userData, setUserData] = useState<Iinventory[] | null>();
   const [usersDatas, setUsersDatas] = useState<Iuser | null>();
-  const [editData, setEditData] = useState<Iinventory | null>();
   const [getId, setId] = useState();
 
   useEffect(() => {
@@ -70,7 +69,6 @@ const Inventory = () => {
 
   const openEditModal = (user: Iinventory) => {
     if (editmodalRef.current) {
-      setEditData(user);
       setItemName(user.name); // Set the initial value for itemName
       setDescription(user.description); // Set the initial value for description
       setQuantity(user.quantity); // Set the initial value for quantity
