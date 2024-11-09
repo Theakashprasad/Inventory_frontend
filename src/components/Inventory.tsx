@@ -18,7 +18,7 @@ const Inventory = () => {
   const [userData, setUserData] = useState<Iinventory[] | null>();
   const [usersDatas, setUsersDatas] = useState<Iuser | null>();
   const [getId, setId] = useState();
-
+     
   useEffect(() => {
     let initialUserState = null;
     const storedUserDetail =
@@ -30,10 +30,10 @@ const Inventory = () => {
   }, [setUsersDatas]);
 
   const fetchData = async () => {
-    if (usersDatas?.email) {
+    if (usersDatas?.id) {
       try {
         const response = await axiosInstance.get(
-          `/api/getInventory/${usersDatas.email}`
+          `/api/getInventory/${usersDatas.id}`
         );
         setUserData(response.data);
       } catch (error) {
@@ -130,7 +130,7 @@ const Inventory = () => {
           description,
           quantity,
           price,
-          email: usersDatas?.email, // Add the email to the log,
+          creatorId: usersDatas?.id, // Add the email to the log,
         });
         console.log("response", response);
         toast.success("SUCCESSFULLY ADDED", {
@@ -209,7 +209,7 @@ const Inventory = () => {
         description,
         quantity,
         price,
-        email: usersDatas?.email, // Add the email to the log
+        creatorId: usersDatas?.id, // Add the email to the log
         getId,
       });
       console.log("response", response);
@@ -235,7 +235,7 @@ const Inventory = () => {
       if (response.data.message) {
         fetchData();
 
-        toast.success(`response.data.message`, {
+        toast.success(response.data.message, {
           position: "top-center",
         });
       }

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Icustomer, Iinventory, Isale } from "../Types/User";
+import { Icustomer, Iinventory, Isale, Iuser } from "../Types/User";
 import axiosInstance from "../lib/axios";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -17,7 +17,7 @@ const Sales = () => {
   const [sales, setSales] = useState<Isale[] | null>(null);
   const [items, setItems] = useState<Iinventory[] | null>(null);
   const [customers, setCustomers] = useState<Icustomer[] | null>(null);
-  const [usersDatas, setUsersDatas] = useState<Iinventory | null>();
+  const [usersDatas, setUsersDatas] = useState<Iuser | null>();
   const [selectedItem, setSelectedItem] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -42,7 +42,7 @@ const Sales = () => {
   const fetchSales = async () => {
     try {
       const response = await axiosInstance.get(
-        `/api/getSale/${usersDatas?.email}`
+        `/api/getSale/${usersDatas?.id}`
       );
 
       setSales(response.data);
@@ -54,10 +54,10 @@ const Sales = () => {
   const fetchItemsAndCustomers = async () => {
     try {
       const response = await axiosInstance.get(
-        `/api/getInventory/${usersDatas?.email}`
+        `/api/getInventory/${usersDatas?.id}`
       );
       const customersResponse = await axiosInstance.get(
-        `/api/getCustomer/${usersDatas?.email}`
+        `/api/getCustomer/${usersDatas?.id}`
       );
       setItems(response.data);
       setCustomers(customersResponse.data);
@@ -88,13 +88,13 @@ const Sales = () => {
         itemName: selectedItem,
         customerName: selectedCustomer,
         quantity,
-        email: usersDatas?.email, // Add the email to the log,
+        email: usersDatas?.id, // Add the email to the log,
       });
       toast.success("SUCCESSFULLY ADDED", {
         position: "top-center",
       });
       fetchSales();
-      fetchItemsAndCustomers()
+      fetchItemsAndCustomers();
       modalRef.current?.close();
       setSelectedItem("");
       setSelectedCustomer("");
@@ -145,6 +145,45 @@ const Sales = () => {
     XLSX.writeFile(workbook, "sales_data.xlsx");
   };
 
+  const sentEmail = async () => {
+    try {
+      const doc = new jsPDF();
+      doc.text("Sales Data", 14, 16);
+      doc.autoTable({
+        startY: 26,
+        head: [["Item", "Customer", "Quantity", "Cash", "Sale Date"]],
+        body:
+          sales &&
+          sales.map((sale) => [
+            sale.itemName,
+            sale.customerName,
+            sale.quantity,
+            `₹ ${sale.cash}`,
+            new Date(sale.saleDate).toLocaleDateString(),
+          ]),
+      });
+
+      const pdfBlob = doc.output("blob");
+      const pdfData = await pdfBlob.arrayBuffer();
+      const base64Pdf = btoa(String.fromCharCode(...new Uint8Array(pdfData)));
+
+      const response = await axiosInstance.post("/api/postEmail", {
+        email: usersDatas?.email,
+        pdfData: base64Pdf,
+      });
+      console.log(response);
+      if (response.data) {
+        toast.success("SUCCESSFULLY SENT", {
+          position: "top-center",
+        });
+      }
+    } catch (error) {
+      toast.success("UN - SUCCESSFULLY", {
+        position: "top-center",
+      });
+    }
+  };
+
   return (
     <div className="flex-1 p-6">
       <h1 className="text-3xl font-bold mb-4">SALES REPORT</h1>
@@ -170,6 +209,13 @@ const Sales = () => {
         >
           DOWNLOAD EXCEL
         </button>
+        <button
+          onClick={sentEmail}
+          type="submit"
+          className="inline-block rounded bg-blue-500 px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-lg transition duration-300 ease-in-out transform hover:scale-105 hover:bg-blue-600 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300 active:bg-blue-700 dark:bg-blue-400 dark:hover:bg-blue-500 dark:focus:ring-blue-600 dark:active:bg-blue-600"
+        >
+          SENT EMAIL
+        </button>
       </div>
       {/* Card */}
       <table className="w-full text-left table-auto text-lg ">
@@ -179,8 +225,9 @@ const Sales = () => {
             <th className="px-6 py-4">PRODUCT</th>
             <th className="px-6 py-4">CUSTOMER</th>
             <th className="px-6 py-4">QUANTITY</th>
-            <th className="px-6 py-4">CASH</th>
+            <th className="px-6 py-4">PRICE</th>
             <th className="px-6 py-4">SALE DATE</th>
+            <th className="px-6 py-4">GRAND TOTAL</th>
           </tr>
         </thead>
         <tbody>
@@ -191,10 +238,11 @@ const Sales = () => {
                 <td className="px-6 py-4">{user?.itemName}</td>
                 <td className="px-6 py-4">{user.customerName}</td>
                 <td className="px-6 py-4">{user?.quantity}</td>
-                <td className="px-6 py-4">{user.cash}</td>
+                <td className="px-6 py-4">{user.itemPrice}</td>
                 <td className="px-6 py-4">
                   {new Date(user.saleDate).toLocaleDateString()}
                 </td>
+                <td className="px-6 py-4">{user.cash}</td>
               </tr>
             ))}
         </tbody>

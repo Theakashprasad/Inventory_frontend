@@ -13,7 +13,7 @@ export default function Login(): JSX.Element {
   const { setIsAuth } = useStore();
 
       
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => { 
     e.preventDefault();
 
     if (!email || !password) {
@@ -38,7 +38,9 @@ export default function Login(): JSX.Element {
           email: response.data.email,
           profilePic: response.data.profilePic,
         };
+        
         localStorage.setItem("userDetail", JSON.stringify(obj));
+        localStorage.setItem("jwt", JSON.stringify(response.data.token));
         setIsAuth(true)
         router("/"); 
       } else {

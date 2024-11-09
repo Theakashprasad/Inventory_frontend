@@ -1,6 +1,6 @@
-import  { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axiosInstance from "../lib/axios";
-import { Icustomer } from "../Types/User";
+import { Icustomer, Iuser } from "../Types/User";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { IoMdAddCircleOutline } from "react-icons/io";
@@ -12,7 +12,7 @@ const Customer = () => {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [userData, setUserData] = useState<Icustomer[] | null>();
-  const [usersDatas, setUsersDatas] = useState<Icustomer | null>();
+  const [usersDatas, setUsersDatas] = useState<Iuser | null>();
   const [getId, setId] = useState();
 
   const modalRef = useRef<HTMLDialogElement>(null);
@@ -38,7 +38,7 @@ const Customer = () => {
     if (usersDatas?.email) {
       try {
         const response = await axiosInstance.get(
-          `/api/getCustomer/${usersDatas.email}`
+          `/api/getCustomer/${usersDatas.id}`
         );
         setUserData(response.data);
       } catch (error) {
@@ -70,7 +70,7 @@ const Customer = () => {
       setEmail(user.email); // Set the initial value for description
       setPhone(user.phone); // Set the initial value for quantity
       setAddress(user.address); // Set the initial value for price
-      setId(user._id)
+      setId(user._id);
       editmodalRef.current.showModal();
     }
   };
@@ -131,7 +131,7 @@ const Customer = () => {
           email,
           phone,
           address,
-          userEmail: usersDatas?.email, // Add the email to the log
+          creatorId: usersDatas?.id, // Add the email to the log
         });
         console.log("response", response);
         toast.success("SUCCESSFULLY ADDED", {
@@ -213,8 +213,8 @@ const Customer = () => {
           email,
           phone,
           address,
-          userEmail: usersDatas?.email, // Add the email to the log
-          getId
+          creatorId: usersDatas?.id, // Add the email to the log
+          getId,
         });
         console.log("response", response);
         toast.success("SUCCESSFULLY ADDED", {
@@ -244,6 +244,20 @@ const Customer = () => {
     }
   };
 
+  const handleDelete = async (itemId: string) => {
+    try {
+      const response = await axiosInstance.delete(
+        `/api/deleteCustomer/${itemId}`
+      );
+      if (response.data.message) {
+        fetchData();
+
+        toast.success(response.data.message, {
+          position: "top-center",
+        });
+      }
+    } catch (error) {}
+  };
   return (
     <div className="flex-1 p-6">
       <h1 className="text-3xl font-bold mb-4">CUSTOMER MANAGEMENT</h1>
@@ -293,7 +307,10 @@ const Customer = () => {
                       >
                         EDIT
                       </button>
-                      <button className="btn btn-outline btn-secondary">
+                      <button
+                        onClick={() => handleDelete(user._id)}
+                        className="btn btn-outline btn-secondary"
+                      >
                         DELETE
                       </button>
                     </div>

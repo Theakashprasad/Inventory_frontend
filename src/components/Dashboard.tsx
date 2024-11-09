@@ -35,7 +35,7 @@ const Dashboard = () => {
 
     if (storedUserDetail) {
       const initialUserState = JSON.parse(storedUserDetail);
-      fetchData(initialUserState.email);
+      fetchData(initialUserState.id);
     }
   }, []); // Empty dependency array to run only once
 

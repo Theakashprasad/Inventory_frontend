@@ -26,6 +26,7 @@ export interface Isale {
   itemName: any;
   customerName: string;
   quantity: string;
+  itemPrice: string;
   cash: string;
   owner: string;
   saleDate: string;

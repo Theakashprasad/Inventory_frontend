@@ -12,7 +12,7 @@ const Home = () => {
   const [isClicked, setIsClicked] = useState(1);
   const [usersDatas, setUsersDatas] = useState<Iuser | null>();
   const router = useNavigate();
-const { setIsAuth } = useStore();
+  const { setIsAuth } = useStore();
 
   useEffect(() => {
     let initialUserState = null;
@@ -40,8 +40,8 @@ const { setIsAuth } = useStore();
   };
 
   const handleLogout = () => {
-    setIsAuth(false)
-    localStorage.removeItem("userDetail");  // Remove user data from localStorage
+    setIsAuth(false);
+    localStorage.clear();
     router("/login"); // Redirect to login page
   };
 

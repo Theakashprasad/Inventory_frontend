@@ -8,9 +8,11 @@ const axiosInstance = axios.create({
 // Request Interceptor: Attach Authorization Token
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('access_token');  // Assuming the token is stored in localStorage
+    const token = localStorage.getItem('jwt');  // Assuming the token is stored in localStorage
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;  // Attach token to headers
+      console.log('Authorization header:', config.headers.Authorization); // Log for debugging
+
     }
     return config;
   },
