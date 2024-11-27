@@ -208,7 +208,7 @@ const Customer = () => {
         console.log("usersDatas", usersDatas);
 
         // If there are no errors, proceed with form submission logic
-        const response = await axiosInstance.patch("/api/patchCustomer", {
+         await axiosInstance.patch("/api/patchCustomer", {
           customerName,
           email,
           phone,

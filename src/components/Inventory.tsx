@@ -204,7 +204,7 @@ const Inventory = () => {
       editmodalRef.current?.close();
 
       // If there are no errors, proceed with form submission logic
-      const response = await axiosInstance.patch("/api/patchInventory", {
+     await axiosInstance.patch("/api/patchInventory", {
         itemName,
         description,
         quantity,
