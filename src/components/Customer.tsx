@@ -215,13 +215,27 @@ const Customer = () => {
           address,
           creatorId: usersDatas?.id, // Add the email to the log
           getId,
+        }).then((response) => {
+          console.log("response", response);
+          toast.success("SUCCESSFULLY ADDED", {
+            position: "top-center",
+          });
+          // Close the modal after successful submission
+          fetchData();
+        })
+        .catch((error) => {
+          // Handle error response
+          if (error.response && error.response.status === 400) {
+            toast.error(error.response.data.error || "Error updating item", {
+              position: "top-center",
+            });
+          } else {
+            toast.error("Internal Server Error", {
+              position: "top-center",
+            });
+          }
         });
-        console.log("response", response);
-        toast.success("SUCCESSFULLY ADDED", {
-          position: "top-center",
-        });
-        // Close the modal after successful submission
-        fetchData();
+  
 
         // Reset the form fields after submission
         setCustomerName("");
